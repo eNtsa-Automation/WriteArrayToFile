@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_WriteStringArrayToFile" Id="{bac6f9e5-7ac0-4b35-a5d8-efa964676d24}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_WriteStringArrayToFile
+VAR_IN_OUT
+	straArrayToWrite	: ARRAY[*] OF STRING(255);
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	
+	fFallingFileOpenBusy 	: 	F_TRIG;	
+	fFallingPutsBusy	 	:	F_TRIG;
+	fFallingFileCloseBusy 	: 	F_TRIG;
+	
+	fbFileOpen 				: 	FB_FileOpen;
+	fbFilePuts				: 	FB_FilePuts;
+	fbFileClose 			: 	FB_FileClose;
+	
+	 
+	strFilePath				: STRING(255);
+	bTriggerWriteSequence	: BOOL;
+	bRunFilePuts 			: BOOL;
+	
+	straStringArrayMirror	: ARRAY[1..1000] OF STRING(255);
+	strStringToWrite		: STRING(255);
+	
+	diIterator		: DINT;
+	diStringCount	: DINT;
+	uiCurrentLine	: UINT	:= 1;
+	
+	uiStringPutsState	: UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fFallingFileOpenBusy(CLK 	:= fbFileOpen.bBusy);
+fFallingPutsBusy(	CLK 	:= fbFilePuts.bBusy);
+fFallingFileCloseBusy(CLK	:= fbFileClose.bBusy); 
+
+// Open the file - create it if it doesn't exist already
+fbFileOpen(	sNetId 		:= '',
+			sPathName 	:= strFilePath,
+			nMode 		:= FOPEN_MODEAPPEND OR FOPEN_MODEPLUS,
+			ePath 		:= PATH_GENERIC,
+			bExecute 	:= bTriggerWriteSequence,	
+			tTimeout 	:= T#500MS);
+
+IF(bTriggerWriteSequence AND  fbFileOpen.hFile <> 0 AND fFallingFileOpenBusy.Q) THEN
+	uiStringPutsState	:= 16#20;
+END_IF
+
+CASE uiStringPutsState OF 
+	16#10:
+		// Idle state
+		uiCurrentLine	:= 1;
+	
+	16#20:	
+		// trigger a line to be written
+		bRunFilePuts		:= TRUE;	// trigger the write
+		uiStringPutsState	:= 16#30;
+	
+	16#30:	
+		// Increment the array index if there are more strings to be written
+		
+		bRunFilePuts	:= FALSE;
+		
+		IF fFallingPutsBusy.Q THEN
+			
+			IF(uiCurrentLine >= diStringCount) THEN
+				uiStringPutsState	:= 16#10;
+			ELSE
+				uiCurrentLine		:= uiCurrentLine	+ 1;
+				uiStringPutsState	:= 16#20;
+			END_IF
+			
+		END_IF
+			
+	
+	ELSE
+;
+
+END_CASE
+		
+// Write the current string to the file 	
+fbFilePuts(	sNetId	:= '',
+			hFile	:= fbFileOpen.hFile,
+			sLine	:= straStringArrayMirror[uiCurrentLine],
+			tTimeout	:= T#3000MS,
+			bExecute	:= bRunFilePuts);
+
+// Close the file 
+fbFileClose(sNetId :='' ,
+			hFile := fbFileOpen.hFile,
+			bExecute := fbFileOpen.hFile <> 0 AND uiStringPutsState = 16#10,
+			tTimeout := T#500MS);
+		
+// Reset the write sequence trigger when we are done closing the file
+IF(fFallingFileCloseBusy.Q) THEN
+	bTriggerWriteSequence	:= FALSE;
+END_IF
+
+
+]]></ST>
+    </Implementation>
+    <Method Name="AddCR" Id="{12b20274-fe1f-4c0e-aa01-7b7c7bcaeede}">
+      <Declaration><![CDATA[METHOD AddCR : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR diIterator	:= LOWER_BOUND(THIS^.straArrayToWrite,1) TO UPPER_BOUND(THIS^.straArrayToWrite,1) BY 1 DO 
+	THIS^.straArrayToWrite[diIterator]	:= CONCAT(THIS^.straArrayToWrite[diIterator],'$0A');
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WriteArray" Id="{8d118c9d-f8c1-49fa-a32b-84221f860fb2}">
+      <Declaration><![CDATA[METHOD WriteArray : BOOL
+VAR_INPUT
+	strFilePath	: STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.strFilePath	:= strFilePath;
+THIS^.diStringCount	:= 0;
+
+FOR diIterator:= LOWER_BOUND(THIS^.straArrayToWrite,1) TO UPPER_BOUND(THIS^.straArrayToWrite,1) BY 1 DO 
+	THIS^.straStringArrayMirror[diIterator]	:= CONCAT(THIS^.straArrayToWrite[diIterator],'$0A');
+	THIS^.diStringCount	:= THIS^.diStringCount	+ 1;
+END_FOR
+
+THIS^.bTriggerWriteSequence	:= TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_WriteStringArrayToFile">
+      <LineId Id="104" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="643" Count="0" />
+      <LineId Id="880" Count="0" />
+      <LineId Id="882" Count="5" />
+      <LineId Id="889" Count="0" />
+      <LineId Id="938" Count="0" />
+      <LineId Id="881" Count="0" />
+      <LineId Id="939" Count="1" />
+      <LineId Id="945" Count="0" />
+      <LineId Id="944" Count="0" />
+      <LineId Id="976" Count="2" />
+      <LineId Id="946" Count="0" />
+      <LineId Id="949" Count="0" />
+      <LineId Id="980" Count="0" />
+      <LineId Id="952" Count="0" />
+      <LineId Id="975" Count="0" />
+      <LineId Id="953" Count="1" />
+      <LineId Id="986" Count="4" />
+      <LineId Id="1000" Count="0" />
+      <LineId Id="994" Count="3" />
+      <LineId Id="1001" Count="0" />
+      <LineId Id="998" Count="0" />
+      <LineId Id="992" Count="1" />
+      <LineId Id="991" Count="0" />
+      <LineId Id="956" Count="1" />
+      <LineId Id="950" Count="0" />
+      <LineId Id="948" Count="0" />
+      <LineId Id="947" Count="0" />
+      <LineId Id="902" Count="0" />
+      <LineId Id="971" Count="0" />
+      <LineId Id="966" Count="4" />
+      <LineId Id="903" Count="5" />
+      <LineId Id="900" Count="0" />
+      <LineId Id="723" Count="0" />
+      <LineId Id="909" Count="0" />
+      <LineId Id="911" Count="1" />
+      <LineId Id="724" Count="0" />
+      <LineId Id="660" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_WriteStringArrayToFile.AddCR">
+      <LineId Id="5" Count="2" />
+    </LineIds>
+    <LineIds Name="FB_WriteStringArrayToFile.WriteArray">
+      <LineId Id="5" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="13" Count="2" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

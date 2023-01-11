@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{43437237-0656-4031-b5f9-3dc60bed1471}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	straTestStringArray	: ARRAY [1..10] OF STRING(255);
+	fbFillArray	: FB_FillTestArray;
+	fbWriteArray	: FB_WriteStringArrayToFile;
+	
+	bTestFillArray	: BOOL;
+	bTestWriteArray	: BOOL;
+	
+	bTestOpen		: BOOL;
+	bTestClose		: BOOL;
+	
+	fbFileOpen		: FB_FileOpen;
+	fbFileClose		: FB_FileClose;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF(_TaskInfo[GETCURTASKINDEXEX()].FirstCycle) THEN
+	; // Do Nothing
+END_IF
+
+
+// Run the fill array FB 
+fbFillArray(straArrayToFill	:= straTestStringArray);
+
+// Run the file write array
+fbWriteArray(straArrayToWrite	:= straTestStringArray);
+
+IF(bTestFillArray) THEN
+	fbFillArray.FillArray();
+	bTestFillArray	:= FALSE;
+END_IF
+
+IF(bTestWriteArray) THEN
+	fbWriteArray.WriteArray('C:\TestFile.txt');
+	bTestWriteArray	:= FALSE;
+END_IF
+
+// Open the file - create it if it doesn't exist already
+fbFileOpen(	sNetId 		:= '',
+			sPathName 	:= 'C:\TestOpenFile.txt',
+			nMode 		:= FOPEN_MODEAPPEND OR FOPEN_MODEPLUS,
+			ePath 		:= PATH_GENERIC,
+			bExecute 	:= bTestOpen,	
+			tTimeout 	:= T#500MS);
+			
+// Close the file 
+fbFileClose(sNetId :='' ,
+			hFile := fbFileOpen.hFile,
+			bExecute := fbFileOpen.hFile <> 0 AND bTestClose,
+			tTimeout := T#500MS);
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="2" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="42" Count="1" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="59" Count="6" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="69" Count="4" />
+      <LineId Id="67" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

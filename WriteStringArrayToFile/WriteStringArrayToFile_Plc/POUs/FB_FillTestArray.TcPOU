@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_FillTestArray" Id="{f9a1cc50-1500-4580-a30a-d00e76e48df1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_FillTestArray
+VAR_IN_OUT
+	straArrayToFill	: ARRAY[*] OF STRING(255);
+END_VAR
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	iIterator	: DINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="FillArray" Id="{fe87086b-12cd-4601-bc0b-ae1e0f8fc54b}">
+      <Declaration><![CDATA[METHOD FillArray : BOOL
+VAR_INPUT
+END_VAR
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR iIterator:= LOWER_BOUND(straArrayToFill,1) TO UPPER_BOUND(straArrayToFill,1) BY 1 DO 
+	straArrayToFill[iIterator]	:= CONCAT(CONCAT('Element Number : ',DINT_TO_STRING(iIterator)),'');
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_FillTestArray">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FillTestArray.FillArray">
+      <LineId Id="6" Count="2" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

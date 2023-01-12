@@ -52,6 +52,7 @@ END_IF
 CASE uiStringPutsState OF 
 	16#10:
 		// Idle state
+		bRunFilePuts	:= FALSE;
 		uiCurrentLine	:= 1;
 	
 	16#20:	
@@ -97,6 +98,8 @@ fbFileClose(sNetId :='' ,
 // Reset the write sequence trigger when we are done closing the file
 IF(fFallingFileCloseBusy.Q) THEN
 	bTriggerWriteSequence	:= FALSE;
+	THIS^.diStringCount	:= 0;
+	uiStringPutsState	:= 0;
 END_IF
 
 
@@ -121,7 +124,6 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[THIS^.strFilePath	:= strFilePath;
-THIS^.diStringCount	:= 0;
 
 FOR diIterator:= LOWER_BOUND(THIS^.straArrayToWrite,1) TO UPPER_BOUND(THIS^.straArrayToWrite,1) BY 1 DO 
 	THIS^.straStringArrayMirror[diIterator]	:= CONCAT(THIS^.straArrayToWrite[diIterator],'$0A');
@@ -143,7 +145,9 @@ THIS^.bTriggerWriteSequence	:= TRUE;]]></ST>
       <LineId Id="939" Count="1" />
       <LineId Id="945" Count="0" />
       <LineId Id="944" Count="0" />
-      <LineId Id="976" Count="2" />
+      <LineId Id="976" Count="1" />
+      <LineId Id="1032" Count="0" />
+      <LineId Id="978" Count="0" />
       <LineId Id="946" Count="0" />
       <LineId Id="949" Count="0" />
       <LineId Id="980" Count="0" />
@@ -168,7 +172,10 @@ THIS^.bTriggerWriteSequence	:= TRUE;]]></ST>
       <LineId Id="900" Count="0" />
       <LineId Id="723" Count="0" />
       <LineId Id="909" Count="0" />
-      <LineId Id="911" Count="1" />
+      <LineId Id="911" Count="0" />
+      <LineId Id="1033" Count="0" />
+      <LineId Id="1035" Count="0" />
+      <LineId Id="912" Count="0" />
       <LineId Id="724" Count="0" />
       <LineId Id="660" Count="1" />
     </LineIds>
@@ -177,7 +184,6 @@ THIS^.bTriggerWriteSequence	:= TRUE;]]></ST>
     </LineIds>
     <LineIds Name="FB_WriteStringArrayToFile.WriteArray">
       <LineId Id="5" Count="0" />
-      <LineId Id="17" Count="0" />
       <LineId Id="13" Count="2" />
       <LineId Id="18" Count="0" />
       <LineId Id="16" Count="0" />

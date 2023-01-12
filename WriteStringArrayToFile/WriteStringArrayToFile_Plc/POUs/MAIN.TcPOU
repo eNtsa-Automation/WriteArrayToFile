@@ -9,6 +9,7 @@ VAR
 	
 	bTestFillArray	: BOOL;
 	bTestWriteArray	: BOOL;
+	bTestAgain		: BOOL;
 	
 	bTestOpen		: BOOL;
 	bTestClose		: BOOL;
@@ -38,6 +39,11 @@ END_IF
 IF(bTestWriteArray) THEN
 	fbWriteArray.WriteArray('C:\TestFile.txt');
 	bTestWriteArray	:= FALSE;
+END_IF
+
+IF(bTestAgain) THEN
+	fbWriteArray.WriteArray('C:\TestFileAgain.txt');
+	bTestAgain	:= FALSE;
 END_IF
 
 // Open the file - create it if it doesn't exist already
@@ -71,9 +77,9 @@ fbFileClose(sNetId :='' ,
       <LineId Id="30" Count="0" />
       <LineId Id="29" Count="0" />
       <LineId Id="34" Count="0" />
-      <LineId Id="33" Count="0" />
-      <LineId Id="42" Count="1" />
-      <LineId Id="36" Count="0" />
+      <LineId Id="91" Count="3" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="95" Count="3" />
       <LineId Id="59" Count="6" />
       <LineId Id="58" Count="0" />
       <LineId Id="66" Count="0" />

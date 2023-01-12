@@ -10,7 +10,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{16BA37B2-88CC-4BEA-B7B5-F63DCE685BB6}" Name="WriteStringArrayToFile_Plc" PrjFilePath="WriteStringArrayToFile_Plc\WriteStringArrayToFile_Plc.plcproj" TmcFilePath="WriteStringArrayToFile_Plc\WriteStringArrayToFile_Plc.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="WriteStringArrayToFile_Plc\WriteStringArrayToFile_Plc.tmc" TmcHash="{9256A3F6-8FD7-DD68-081C-BC3AFA7E2E8F}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="WriteStringArrayToFile_Plc\WriteStringArrayToFile_Plc.tmc" TmcHash="{2E9BA92E-EA25-4609-8158-948E31793B3C}">
 					<Name>WriteStringArrayToFile_Plc Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Contexts>

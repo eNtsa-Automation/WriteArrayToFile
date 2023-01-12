@@ -17,6 +17,9 @@ VAR
 	fbFileOpen		: FB_FileOpen;
 	fbFileClose		: FB_FileClose;
 	
+	fbCreateDir		: FB_CreateDir;
+	bTestCreatedir	: BOOL;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -59,6 +62,16 @@ fbFileClose(sNetId :='' ,
 			hFile := fbFileOpen.hFile,
 			bExecute := fbFileOpen.hFile <> 0 AND bTestClose,
 			tTimeout := T#500MS);
+			
+			
+fbCreateDir( sNetId:='',
+					sPathName:= CONCAT('C:\TestMakeNewDir2',''),
+					ePath:= PATH_GENERIC,
+					bExecute:=bTestCreatedir,
+					tTimeout:= T#100MS);				
+
+			
+			
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
@@ -84,6 +97,10 @@ fbFileClose(sNetId :='' ,
       <LineId Id="58" Count="0" />
       <LineId Id="66" Count="0" />
       <LineId Id="69" Count="4" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="124" Count="4" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="122" Count="1" />
       <LineId Id="67" Count="0" />
     </LineIds>
   </POU>
